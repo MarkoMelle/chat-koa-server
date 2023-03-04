@@ -22,8 +22,6 @@ router.post('/usernames', (ctx) => {
 
 router.delete('/usernames/:name', (ctx) => {
   const {name} = ctx.params;
-  console.log(ctx.params);
-  console.log(name);
 
   ctx.response.set('Access-Control-Allow-Origin', '*');
 
