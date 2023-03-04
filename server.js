@@ -5,9 +5,8 @@ const cors = require('@koa/cors');
 const WS = require('ws');
 const fs = require('fs');
 const {chat, usernames} = require('./db');
-
 const router = require('./routes');
-
+require('events').EventEmitter.defaultMaxListeners = Infinity; 
 const app = new Koa();
 
 app.use(cors());
