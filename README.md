@@ -1,0 +1,1 @@
+ ({name, messageText} = wsMessage.koaBody);
