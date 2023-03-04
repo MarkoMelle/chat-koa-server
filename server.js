@@ -1,5 +1,6 @@
 const http = require('http');
 const Koa = require('koa');
+const url = require('url');
 const {koaBody} = require('koa-body');
 const cors = require('@koa/cors');
 const WS = require('ws');
@@ -23,11 +24,12 @@ const wsServer = new WS.Server({
   server,
 });
 
-wsServer.on('connection', (ws) => {
+wsServer.on('connection', (ws, req) => {
+  const parameters = url.parse(req.url, true);
+  ws.name = parameters.query
   ws.on('message', (event) => {
     const messageData = JSON.parse(new TextDecoder().decode(event));
     chat.add(messageData);
-
     const eventData = JSON.stringify({
       dataType: 'message',
       message: messageData,
@@ -41,7 +43,14 @@ wsServer.on('connection', (ws) => {
   });
   ws.send(JSON.stringify({dataType: 'usernames', usernames: usernames.data}));
   ws.send(JSON.stringify({dataType: 'messages', messages: chat.data}));
+  ws.on('close', ()=> {
+    usernames.delete(ws.name)
+  })
+  // setInterval(()=>Array.from(wsServer.clients).forEach(client=>{
+  //   console.log('Client.ID: ' + client.name)
+  // }),5000)
 });
+
 
 server.listen(port, (error) => {
   if (error) {
